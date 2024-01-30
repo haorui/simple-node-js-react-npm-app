@@ -1,12 +1,10 @@
 pipeline {
     agent any
-    options  {
-        timeout(time: 1, unit: 'SECONDS')
-    }
     stages {
-        stage('Example') { 
+        stage('Build docker image') { 
             steps {
                 echo 'Hello Jenkins'
+                sh 'docker build -t haorui215/jenkins-react .' 
             }
         }
     }
