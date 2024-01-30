@@ -6,10 +6,9 @@ pipeline {
         }
     }
     stages {
-        stage('Build') { 
+        stage('Build docker image') { 
             steps {
-                sh 'npm config set registry https://registry.npmmirror.com'
-                sh 'npm install' 
+                sh 'docker build -t haorui215/jenkins-react .' 
             }
         }
     }
