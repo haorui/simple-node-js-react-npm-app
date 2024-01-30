@@ -2,9 +2,6 @@
 # FROM node:18.18.2-bullseye-slim as builder
 FROM node:20.11.0-alpine3.19 as builder
 
-ARG MY_ENV=site
-ENV ENV_VALUE=$MY_ENV
-
 WORKDIR /app
 
 COPY package*.json ./
@@ -18,7 +15,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build:${ENV_VALUE}
+RUN npm run build
 
 # stage 2: prod
 # FROM nginx:1.24-bullseye
