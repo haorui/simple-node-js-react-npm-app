@@ -11,10 +11,10 @@ COPY package*.json ./
 
 RUN npm config set registry https://registry.npmmirror.com
 
-RUN --mount=type=cache,target=/app/.npm \
-  npm set cache /app/.npm && \
-  npm ci
-# RUN npm install
+#RUN --mount=type=cache,target=/app/.npm \
+#  npm set cache /app/.npm && \
+#  npm ci
+RUN npm install
 
 COPY . .
 
