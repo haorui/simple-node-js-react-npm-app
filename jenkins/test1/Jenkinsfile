@@ -2,12 +2,7 @@ def createVersion() {
     // result 20240131161412_22
     return new Date().format('yyyyMMddHHmmss') + "_${env.BUILD_ID}"
 }
-def remote = [:]
-remote.name = 'mpb'
-remote.host = '192.168.0.104'
-remote.user = 'haorui'
-remote.password = '271918141'
-remote.allowAnyHosts = true
+
 pipeline {
     agent any
     environment {
@@ -35,9 +30,12 @@ pipeline {
                 }
             }
         }
-        stage('Remote SSH') {
-            sshCommand remote: remote, command: "ls -lrt"
-            sshCommand remote: remote, command: "docker ps"
+        stage('Deploy') {
+            stages {
+                script {
+                    sh 'ssh haorui@192.168.0.104 "/usr/local/bin/docker ps"'
+                }
+            }
         }
     }
 }
