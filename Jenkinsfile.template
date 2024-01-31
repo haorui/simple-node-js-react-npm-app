@@ -8,6 +8,8 @@ pipeline {
     stages {
         stage('Build docker image') { 
             steps {
+                // Dorg.jenkinsci.plugins.durabletask.BourneShellScript.FORCE_BINARY_WRAPPER=true
+                //System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
                 sh 'docker build -t haorui215/jenkins-react .' 
             }
         }
