@@ -31,16 +31,18 @@ pipeline {
             }
         }
         stage('Deploy to Production') {
-            node {
-                def remote = [:]
-                remote.name = 'mpb'
-                remote.host = '192.168.0.104'
-                remote.user = 'haorui'
-                remote.password = '271918141'
-                remote.allowAnyHosts = true
-                stage('Remote SSH') {
-                    sshCommand remote: remote, command: "ls -lrt"
-                    sshCommand remote: remote, command: "docker ps"
+            stages {
+                script {
+                    def remote = [:]
+                    remote.name = 'mpb'
+                    remote.host = '192.168.0.104'
+                    remote.user = 'haorui'
+                    remote.password = '271918141'
+                    remote.allowAnyHosts = true
+                    stage('Remote SSH') {
+                        sshCommand remote: remote, command: "ls -lrt"
+                        sshCommand remote: remote, command: "docker ps"
+                    }
                 }
             }
         }
