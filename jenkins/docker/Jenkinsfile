@@ -1,0 +1,15 @@
+pipeline {
+    agent {
+        label 'mba'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh '''
+                    docker --version
+                    docker ps
+                '''
+            }
+        }
+    }
+}
