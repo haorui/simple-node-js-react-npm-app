@@ -2,15 +2,14 @@ def createVersion() {
     // result 20240131161412_22
     return new Date().format('yyyyMMddHHmmss') + "_${env.BUILD_ID}"
 }
-
+def remote = [:]
+remote.name = 'mpb'
+remote.host = '192.168.0.104'
+remote.user = 'haorui'
+remote.password = '271918141'
+remote.allowAnyHosts = true
 pipeline {
     agent any
-    def remote = [:]
-    remote.name = 'mpb'
-    remote.host = '192.168.0.104'
-    remote.user = 'haorui'
-    remote.password = '271918141'
-    remote.allowAnyHosts = true
     environment {
         _version = createVersion()
     }
