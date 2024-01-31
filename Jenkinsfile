@@ -20,14 +20,19 @@ pipeline {
                 sh 'docker build -t haorui215/jenkins-react:${_version} .' 
             }
         }
-         stage('Push image to Hub'){
+        stage('Push image to Hub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
                         sh 'docker login -u haorui215 -p ${dockerhub}'
                     }
-                   sh 'docker push haorui215/jenkins-react:${_version}'
+                    sh 'docker push haorui215/jenkins-react:${_version}'
                 }
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                sh 'docker images'
             }
         }
     }
