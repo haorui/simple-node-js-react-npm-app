@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sshagent (credentials: ['mbp']) {
+                sshagent (credentials: ['mbpkey']) {
                     sh 'ssh haorui@192.168.0.104 /usr/local/bin/docker ps'
                 }
             }
