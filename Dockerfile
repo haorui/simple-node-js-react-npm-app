@@ -1,28 +1,10 @@
-# stage 1: builder
-# FROM node:18.18.2-bullseye-slim as builder
-FROM node:20.11.0-alpine3.19 as builder
-
-WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm config set registry https://registry.npmmirror.com
-
-#RUN --mount=type=cache,target=/app/.npm \
-#  npm set cache /app/.npm && \
-#  npm ci
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-# stage 2: prod
-# FROM nginx:1.24-bullseye
 FROM nginx:1.25.3-alpine3.18
+# highly recommend you always pin versions for anything beyond dev/learn
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+# change working directory to root of nginx webhost
+# using WORKDIR is preferred to using 'RUN cd /some/path'
 
-EXPOSE 80
+COPY index.html index.html
 
-CMD [ "nginx", "-g", "daemon off;" ]
+# I don't have to specify EXPOSE or CMD because they're in my FROM
