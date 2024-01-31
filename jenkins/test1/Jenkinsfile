@@ -4,7 +4,7 @@ def createVersion() {
 }
 
 pipeline {
-    agent any
+    agent { label 'Jenkins' }
     environment {
         _version = createVersion()
     }
