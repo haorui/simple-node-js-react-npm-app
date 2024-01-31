@@ -5,6 +5,12 @@ def createVersion() {
 
 pipeline {
     agent any
+    def remote = [:]
+    remote.name = 'mpb'
+    remote.host = '192.168.0.104'
+    remote.user = 'haorui'
+    remote.password = '271918141'
+    remote.allowAnyHosts = true
     environment {
         _version = createVersion()
     }
@@ -30,21 +36,9 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Production') {
-            stages {
-                script {
-                    def remote = [:]
-                    remote.name = 'mpb'
-                    remote.host = '192.168.0.104'
-                    remote.user = 'haorui'
-                    remote.password = '271918141'
-                    remote.allowAnyHosts = true
-                    stage('Remote SSH') {
-                        sshCommand remote: remote, command: "ls -lrt"
-                        sshCommand remote: remote, command: "docker ps"
-                    }
-                }
-            }
+        stage('Remote SSH') {
+            sshCommand remote: remote, command: "ls -lrt"
+            sshCommand remote: remote, command: "docker ps"
         }
     }
 }
