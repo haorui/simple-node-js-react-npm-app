@@ -16,8 +16,7 @@ pipeline {
         }
         stage('Build docker image') { 
             steps {
-                echo 'Hello Jenkins'
-                sh 'docker build -t haorui215/jenkins-react:${_version} .' 
+                sh 'docker build -t haorui215/jenkins-react:latest -t haorui215/jenkins-react:${_version} .' 
             }
         }
         stage('Push image to Hub'){
@@ -26,15 +25,18 @@ pipeline {
                     withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
                         sh 'docker login -u haorui215 -p ${dockerhub}'
                     }
-                    sh 'docker push haorui215/jenkins-react:${_version}'
+                    sh '''docker push haorui215/jenkins-react:latest
+                        docker push haorui215/jenkins-react:${_version}
+                        docker rmi haorui215/jenkins-react:latest
+                        docker rmi haorui215/jenkins-react:${_version}'''
                 }
             }
         }
         stage('Deploy') {
             steps {
                 sshagent(['mbpkey']) {
-                    sh 'ssh haorui@192.168.0.104 whoami'
-                    sh 'ssh haorui@192.168.0.104 /usr/local/bin/docker service update --image haorui215/jenkins-react:${_version} nginx'
+                    sh '''ssh haorui@192.168.0.104 whoami
+                        ssh haorui@192.168.0.104 /usr/local/bin/docker service update --image haorui215/jenkins-react:${_version} nginx'''
                 }
             }
         }
