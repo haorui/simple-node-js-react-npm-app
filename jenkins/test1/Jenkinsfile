@@ -18,7 +18,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 sshagent (credentials: ['mbpkey']) {
-                    sh 'ssh haorui@192.168.0.104 /usr/local/bin/docker ps'
+                    sh 'ssh -o StrictHostKeyChecking=no haorui@192.168.0.104'
+                    sh 'whoami'
                 }
             }
         }
