@@ -1,29 +1,41 @@
+def createVersion() {
+    // result 20240131161412_22
+    return new Date().format('yyyyMMddHHmmss') + "_${env.BUILD_ID}"
+}
+
 pipeline {
-    agent {
-        docker {
-            image 'node:lts-buster-slim'
-            args '-p 3000:3000'
-        }
-    }
+    agent any
     environment {
-        CI = 'true'
+        _version = createVersion()
     }
     stages {
-        stage('Build') {
+        stage ('Clone repository') {
             steps {
-                sh 'npm install'
+                checkout scm
             }
         }
-        stage('Test') {
+        stage('Build docker image') { 
             steps {
-                sh './jenkins/scripts/test.sh'
+                echo 'Hello Jenkins'
+                sh 'docker build -t haorui215/jenkins-react:${_version} .' 
             }
         }
-        stage('Deliver') {
+        stage('Push image to Hub'){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                        sh 'docker login -u haorui215 -p ${dockerhub}'
+                    }
+                    sh 'docker push haorui215/jenkins-react:${_version}'
+                }
+            }
+        }
+        stage('Deploy') {
             steps {
-                sh './jenkins/scripts/deliver.sh'
-                input message: 'Finished using the web site? (Click "Proceed" to continue)'
-                sh './jenkins/scripts/kill.sh'
+                sshagent(['mbpkey']) {
+                    sh 'ssh haorui@192.168.0.104 whoami'
+                    sh 'ssh haorui@192.168.0.104 /usr/local/bin/docker service --name nginx  haorui215/jenkins-react:${_version}'
+                }
             }
         }
     }
