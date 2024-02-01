@@ -18,8 +18,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sshagent (credentials: ['mbpkey']) {
-                    sh 'ssh -o StrictHostKeyChecking=no haorui@192.168.0.104'
-                    sh 'whoami'
+                    sh 'ssh -o StrictHostKeyChecking=no haorui@192.168.0.104 "whoami"'
                 }
             }
         }
