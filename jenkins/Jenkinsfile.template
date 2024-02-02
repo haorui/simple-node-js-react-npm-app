@@ -1,16 +1,43 @@
+def createVersion() {
+    // result 20240131161412_22
+    return new Date().format('yyyyMMddHHmmss') + "_${env.BUILD_ID}"
+}
+
 pipeline {
-    agent {
-        docker {
-            image 'node:20.11.0-alpine3.19' 
-            args '-p 3000:3000' 
-        }
+    agent any
+    environment {
+        _version = createVersion()
     }
     stages {
+        stage ('Clone repository') {
+            steps {
+                checkout scm
+            }
+        }
         stage('Build docker image') { 
             steps {
-                // Dorg.jenkinsci.plugins.durabletask.BourneShellScript.FORCE_BINARY_WRAPPER=true
-                //System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
-                sh 'docker build -t haorui215/jenkins-react .' 
+                sh 'docker build -t haorui215/jenkins-react:latest -t haorui215/jenkins-react:${_version} .' 
+            }
+        }
+        stage('Push image to Hub'){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                        sh 'docker login -u haorui215 -p ${dockerhub}'
+                    }
+                    sh '''docker push haorui215/jenkins-react:latest
+                        docker push haorui215/jenkins-react:${_version}
+                        docker rmi haorui215/jenkins-react:latest
+                        docker rmi haorui215/jenkins-react:${_version}'''
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sshagent(['mbpkey']) {
+                    sh '''ssh haorui@192.168.0.104 whoami
+                        ssh haorui@192.168.0.104 /usr/local/bin/docker service update --image haorui215/jenkins-react:${_version} simple-react_web'''
+                }
             }
         }
     }

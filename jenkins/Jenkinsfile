@@ -36,7 +36,7 @@ pipeline {
             steps {
                 sshagent(['mbpkey']) {
                     sh '''ssh haorui@192.168.0.104 whoami
-                        ssh haorui@192.168.0.104 /usr/local/bin/docker service update --image haorui215/jenkins-react:${_version} nginx'''
+                        ssh haorui@192.168.0.104 /usr/local/bin/docker service update --image haorui215/jenkins-react:${_version} simple-react_web'''
                 }
             }
         }
